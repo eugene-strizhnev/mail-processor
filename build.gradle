@@ -1,0 +1,28 @@
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group = 'org.istrid'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = 1.8
+}
+
+
+
+
+
+
+subprojects {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+
+        compile('org.apache.hadoop:hadoop-client:2.8.2') {
+            exclude module: "slf4j-log4j12"
+        }
+        compile "org.apache.activemq:artemis-spring-integration:2.4.0"
+        compile "org.apache.geronimo.specs:geronimo-jms_2.0_spec:1.0-alpha-2"
+    }
+}
