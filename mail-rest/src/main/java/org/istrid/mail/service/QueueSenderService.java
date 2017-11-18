@@ -1,5 +1,7 @@
 package org.istrid.mail.service;
 
+import reactor.core.publisher.Mono;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -13,23 +15,7 @@ public class QueueSenderService {
     private ConnectionFactory connectionFactory;
     private Destination destination;
 
-    public ConnectionFactory getConnectionFactory() {
-        return connectionFactory;
-    }
-
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
-
-    public Destination getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Destination destination) {
-        this.destination = destination;
-    }
-
-    public void send(String msg) {
+    public Mono<Void> send(String msg) {
         Connection conn = null;
         try {
             conn = connectionFactory.createConnection();
@@ -48,5 +34,14 @@ public class QueueSenderService {
                 }
             }
         }
+        return Mono.empty();
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 }

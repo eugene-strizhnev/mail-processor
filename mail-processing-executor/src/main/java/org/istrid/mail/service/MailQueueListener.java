@@ -7,10 +7,9 @@ import javax.jms.TextMessage;
 
 public class MailQueueListener implements MessageListener {
 
-    protected static String lastMessage = null;
-
     @Override
     public void onMessage(Message message) {
+        String lastMessage;
         try {
             lastMessage = ((TextMessage) message).getText();
         } catch (JMSException e) {
