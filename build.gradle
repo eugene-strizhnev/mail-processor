@@ -26,5 +26,9 @@ subprojects {
         compile "org.apache.activemq:artemis-spring-integration:2.3.0"
         compile "org.apache.geronimo.specs:geronimo-jms_2.0_spec:1.0-alpha-2"
 
+        compile('org.springframework.data:spring-data-hadoop:2.5.0.RELEASE') {
+            exclude module: "slf4j-log4j12"
+            exclude group: "commons-beanutils"
+        }
     }
 }

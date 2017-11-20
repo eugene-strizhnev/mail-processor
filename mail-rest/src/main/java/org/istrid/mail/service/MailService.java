@@ -2,10 +2,10 @@ package org.istrid.mail.service;
 
 import org.istrid.mail.repository.MailHDFSRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class MailService {
@@ -16,8 +16,8 @@ public class MailService {
     @Autowired
     private QueueSenderService queueSenderService;
 
-    public Mono<Void> saveMail(Flux<DataBuffer> mailData) {
-        return mailHDFSRepository.saveMessage(mailData)
-                .flatMap(queueSenderService::send);
+    public void saveMail(InputStream mailData) throws IOException {
+        String id = mailHDFSRepository.saveMessage(mailData);
+        queueSenderService.send(id);
     }
 }
