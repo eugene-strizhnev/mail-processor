@@ -1,5 +1,9 @@
   <configuration>
-    
+
+      <property>
+          <name>fs.default.name</name>
+          <value>hdfs://sandbox.hortonworks.com:8020</value>
+      </property>
     <property>
       <name>hadoop.registry.rm.enabled</name>
       <value>true</value>

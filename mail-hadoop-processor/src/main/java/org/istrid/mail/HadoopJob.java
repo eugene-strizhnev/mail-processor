@@ -1,59 +1,37 @@
 package org.istrid.mail;
 
 
-import cascading.flow.Flow;
-import cascading.flow.FlowConnector;
-import cascading.flow.FlowDef;
-import cascading.flow.hadoop2.Hadoop2MR1FlowConnector;
-import cascading.operation.aggregator.Count;
-import cascading.operation.regex.RegexSplitGenerator;
-import cascading.pipe.Each;
-import cascading.pipe.Every;
-import cascading.pipe.GroupBy;
-import cascading.pipe.Pipe;
-import cascading.property.AppProps;
-import cascading.scheme.hadoop.TextDelimited;
-import cascading.tap.Tap;
-import cascading.tap.hadoop.Hfs;
-import cascading.tuple.Fields;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
+import scala.Tuple2;
 
-import java.util.Properties;
+import java.util.Arrays;
 
-public class Main {
+public class HadoopJob {
 
     public static void main(String[] args) {
-        String docPath = args[0];
-        String wcPath = args[1];
+        String inputFile = args[0];
+        String outputFile = args[1];
+        // Create a Java Spark Context.
+        SparkConf conf = new SparkConf().setAppName("wordCount").setMaster("yarn");
+        JavaSparkContext sc = new JavaSparkContext(conf);
+        // Load our input data.
+        JavaRDD<String> input = sc.textFile(inputFile);
+        // Split up into words.
+        JavaRDD<String> words = input.flatMap(
+                (FlatMapFunction<String, String>) x -> Arrays.asList(x.split(" ")).iterator());
+        // Transform into word and count.
+        JavaPairRDD<String, Integer> counts = words.mapToPair(
+                (PairFunction<String, String, Integer>) x -> new Tuple2(x, 1))
+                .reduceByKey((Function2<Integer, Integer, Integer>) (x, y) -> x + y);
+        // Save the word count back out to a text file, causing evaluation.
 
-        Properties properties = new Properties();
-        AppProps.setApplicationJarClass(properties, Main.class);
-        AppProps.setApplicationName(properties, "Impatient Part 2");
-        AppProps.addApplicationTag(properties, "tutorial:impatient");
-        AppProps.addApplicationTag(properties, "technology:Cascading");
-        FlowConnector flowConnector = new Hadoop2MR1FlowConnector(properties);
-
-        // create source and sink taps
-        Tap docTap = new Hfs(new TextDelimited(true, "\t"), docPath);
-        Tap wcTap = new Hfs(new TextDelimited(true, "\t"), wcPath);
-
-        // specify a regex operation to split the "document" text lines into a token stream
-        Fields token = new Fields("token");
-        Fields text = new Fields("text");
-        RegexSplitGenerator splitter = new RegexSplitGenerator(token, "[ \\[\\]\\(\\),.]");
-        // only returns "token"
-        Pipe docPipe = new Each("token", text, splitter, Fields.RESULTS);
-
-        // determine the word counts
-        Pipe wcPipe = new Pipe("wc", docPipe);
-        wcPipe = new GroupBy(wcPipe, token);
-        wcPipe = new Every(wcPipe, Fields.ALL, new Count(), Fields.ALL);
-
-        // connect the taps, pipes, etc., into a flow
-        FlowDef flowDef = FlowDef.flowDef().setName("wc").addSource(docPipe, docTap).addTailSink(wcPipe, wcTap);
-
-        // write a DOT file and run the flow
-        Flow wcFlow = flowConnector.connect(flowDef);
-        wcFlow.writeDOT("dot/wc.dot");
-        wcFlow.complete();
+        counts.saveAsTextFile(outputFile);
     }
 }
+

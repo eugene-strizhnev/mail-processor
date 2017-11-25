@@ -1,4 +1,4 @@
-package org.istrid.mail.helper;
+package org.istrid.mail.service.helper;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;

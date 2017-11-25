@@ -1,17 +1,27 @@
+configurations {
+    mapreduce {
+        description = 'Map reduce jobs dependencies'
+    }
+    compile {
+        extendsFrom mapreduce
+    }
+}
 
 repositories {
     mavenCentral()
 }
 
+project.afterEvaluate {
+    task prepareMapReduceLibsInDir(type: Sync, dependsOn: jar) {
+//        from jar.outputs.files
+        from configurations.mapreduce.files.find { it.name.contains('mail-hadoop-processor') }
+        into 'build/mapreducelib'
+    }
+}
+
+
 dependencies {
+    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.2.0'
 
-    compile('org.apache.hbase:hbase-client:1.3.1') {
-        exclude module: "slf4j-log4j12"
-        exclude group: "commons-beanutils"
-    }
-
-    compile('org.springframework:spring-tx:5.0.1.RELEASE'){
-        exclude module: "slf4j-log4j12"
-        exclude group: "commons-beanutils"
-    }
+    mapreduce project(":mail-hadoop-processor")
 }
