@@ -1,4 +1,4 @@
-package org.istrid.mail.service;
+package org.istrid.mail.service.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

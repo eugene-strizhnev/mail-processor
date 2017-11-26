@@ -1,29 +1,35 @@
 allprojects {
-    apply plugin: 'java'
-    apply plugin: 'idea'
+    apply plugin: "java"
+    apply plugin: "idea"
 
-    group = 'org.istrid'
-    version = '0.0.1-SNAPSHOT'
+    group = "org.istrid"
+    version = "0.0.1-SNAPSHOT"
     sourceCompatibility = 1.8
 }
 
-configure(subprojects.findAll {it.name != 'mail-hadoop-processor'}) {
+ext.log4jVersion = "2.10.0"
+ext.springDataHadoopVersion = "2.5.0.RELEASE"
+configure(subprojects.findAll { it.name != "mail-spark-processor" }) {
     repositories {
         mavenCentral()
     }
 
+    def withoutHadoopExtra = {
+        exclude module: "slf4j-log4j12"
+        exclude module: "commons-beanutils"
+        exclude group: "javax.servlet"
+    }
     dependencies {
+        compile("org.apache.activemq:artemis-spring-integration:2.3.0",
+                "org.apache.geronimo.specs:geronimo-jms_2.0_spec:1.0-alpha-2")
 
-        compile('org.apache.hadoop:hadoop-client:2.8.2') {
-            exclude module: "slf4j-log4j12"
-            exclude group: "commons-beanutils"
-        }
-        compile "org.apache.activemq:artemis-spring-integration:2.3.0"
-        compile "org.apache.geronimo.specs:geronimo-jms_2.0_spec:1.0-alpha-2"
+        compile "org.apache.hadoop:hadoop-client:2.8.2", withoutHadoopExtra
+        compile "org.springframework.data:spring-data-hadoop:${springDataHadoopVersion}", withoutHadoopExtra
+        compile "org.springframework.data:spring-data-hadoop-store:${springDataHadoopVersion}", withoutHadoopExtra
 
-        compile('org.springframework.data:spring-data-hadoop:2.5.0.RELEASE') {
-            exclude module: "slf4j-log4j12"
-            exclude group: "commons-beanutils"
-        }
+        compile(
+                "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+                "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+        )
     }
 }

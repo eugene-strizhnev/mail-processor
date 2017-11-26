@@ -12,7 +12,7 @@ import scala.Tuple2;
 
 import java.util.Arrays;
 
-public class HadoopJob {
+public class SparkJob {
 
     public static void main(String[] args) {
         String inputFile = args[0];

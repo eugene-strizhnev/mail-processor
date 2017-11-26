@@ -1,9 +1,9 @@
 configurations {
-    mapreduce {
-        description = 'Map reduce jobs dependencies'
+    sparkJob {
+        description = "Spark jobs dependencies"
     }
     compile {
-        extendsFrom mapreduce
+        extendsFrom sparkJob
     }
 }
 
@@ -12,16 +12,17 @@ repositories {
 }
 
 project.afterEvaluate {
-    task prepareMapReduceLibsInDir(type: Sync, dependsOn: jar) {
+    task preparesparkJobLibsInDir(type: Sync, dependsOn: jar) {
 //        from jar.outputs.files
-        from configurations.mapreduce.files.find { it.name.contains('mail-hadoop-processor') }
-        into 'build/mapreducelib'
+        from configurations.sparkJob.files.find { it.name.contains("mail-spark-processor") }
+        into "build/sparkJoblib"
     }
 }
 
 
 dependencies {
-    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.2.0'
+    compile group: "org.apache.spark", name: "spark-core_2.11", version: "2.2.0"
+    compile "commons-beanutils:commons-beanutils:1.9.2"
 
-    mapreduce project(":mail-hadoop-processor")
+    sparkJob project(":mail-spark-processor")
 }

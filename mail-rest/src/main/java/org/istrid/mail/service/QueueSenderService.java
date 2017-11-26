@@ -1,5 +1,8 @@
 package org.istrid.mail.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -9,6 +12,8 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 
 public class QueueSenderService {
+
+    private static final Logger LOGGER = LogManager.getLogger(QueueSenderService.class);
 
     private ConnectionFactory connectionFactory;
     private Destination destination;
@@ -22,13 +27,13 @@ public class QueueSenderService {
             TextMessage message = session.createTextMessage(msg);
             producer.send(message);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOGGER.error(ex);
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (JMSException e) {
-                    e.printStackTrace();
+                    LOGGER.error(e);
                 }
             }
         }

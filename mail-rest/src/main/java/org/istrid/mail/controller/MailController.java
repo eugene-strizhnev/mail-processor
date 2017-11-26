@@ -28,7 +28,6 @@ public class MailController {
         FileItemIterator iterator = upload.getItemIterator(request);
         while (iterator.hasNext()) {
             FileItemStream item = iterator.next();
-System.out.println(item.getFieldName());
             if (!item.isFormField()) {
                 mailService.saveMail(item.openStream());
             }

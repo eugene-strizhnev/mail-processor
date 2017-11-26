@@ -1,0 +1,26 @@
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(
+            "org.scala-lang:scala-library:2.11.12",
+            "org.apache.spark:spark-core_2.11:2.2.0",
+    )
+    compile('org.apache.hadoop:hadoop-client:2.8.2') {
+        exclude module: "slf4j-log4j12"
+        exclude group: "commons-beanutils"
+    }
+}
+
+project.afterEvaluate {
+    jar {
+        description = "Assembles a Spark ready jar file"
+        into('lib') {
+            from { configurations.compile.minus([configurations.compileOnly]) }
+        }
+        manifest {
+            attributes("Main-Class": "org.istrid.mail.SparkJob")
+        }
+    }
+}

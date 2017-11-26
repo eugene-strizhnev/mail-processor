@@ -1,6 +1,7 @@
 package org.istrid.mail.service;
 
 import org.apache.spark.launcher.SparkLauncher;
+import org.istrid.mail.service.util.InputStreamReaderRunnable;
 
 import java.io.IOException;
 
@@ -12,7 +13,7 @@ public class JobRunnerService {
         final String javaHome = "/Library/Java/JavaVirtualMachines/jdk1.8.0_121.jdk/Contents/Home";
         final String sparkHome = "/Users/istrid/Downloads/spark-2.2.0-bin-hadoop2.7";
         final String appResource = "mail-processing-executor/build/mapreducelib/mail-hadoop-processor-0.0.1-SNAPSHOT.jar";
-        final String mainClass = "org.istrid.mail.HadoopJob";
+        final String mainClass = "org.istrid.mail.SparkJob";
         //
         // parameters passed to the  SparkFriendRecommendation
         final String[] appArgs = new String[]{

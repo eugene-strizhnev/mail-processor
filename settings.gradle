@@ -1,4 +1,4 @@
 include 'mail-processing-executor'
 include 'mail-rest'
-include 'mail-hadoop-processor'
+include 'mail-spark-processor'
 
