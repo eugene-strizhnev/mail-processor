@@ -1,5 +1,7 @@
-include 'mail-processing-executor'
 include 'mail-rest'
-include 'mail-spark-processor'
+include 'mail-processing-executor'
+include 'mail-db-repository'
 include 'mail-db'
+include 'mail-spark-processor'
+include 'mail-db-domain'
 

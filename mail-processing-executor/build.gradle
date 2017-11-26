@@ -1,3 +1,15 @@
+buildscript {
+    ext {
+        springBootVersion = "1.5.8.RELEASE"
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
 configurations {
     sparkJob {
         description = "Spark jobs dependencies"
@@ -20,9 +32,17 @@ project.afterEvaluate {
 }
 
 
+apply plugin: "org.springframework.boot"
+
 dependencies {
-    compile group: "org.apache.spark", name: "spark-core_2.11", version: "2.2.0"
+    compile "org.apache.spark:spark-core_2.11:2.2.0"
     compile "commons-beanutils:commons-beanutils:1.9.2"
+    compile("org.springframework.boot:spring-boot-starter")
+     compile project(":mail-db-repository")
 
     sparkJob project(":mail-spark-processor")
+}
+
+configurations {
+    all*.exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
 }
