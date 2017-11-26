@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 @Service
 public class MailService {
-    private static final Logger LOGGER = LogManager.getLogger(QueueSenderService.class);
+    private static final Logger LOGGER = LogManager.getLogger(MailService.class);
 
     @Autowired
     private MailHDFSRepository mailHDFSRepository;
