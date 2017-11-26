@@ -1,0 +1,27 @@
+apply plugin: 'liquibase'
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.liquibase:liquibase-gradle-plugin:1.2.0'
+        classpath group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    }
+}
+
+dependencies {
+
+
+}
+liquibase {
+
+    activities {
+        main {
+            changeLogFile "${projectDir}/src/init_db.xml"
+            url 'jdbc:mysql://127.0.0.1:3306/demo_db?nullNamePatternMatchesAll=true'
+            username 'root'
+            password '123456'
+        }
+        runList = 'main'
+    }
+}

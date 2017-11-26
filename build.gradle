@@ -1,18 +1,19 @@
-allprojects {
-    apply plugin: "java"
+subprojects {
     apply plugin: "idea"
 
     group = "org.istrid"
     version = "0.0.1-SNAPSHOT"
-    sourceCompatibility = 1.8
+    repositories {
+        mavenCentral()
+    }
 }
 
 ext.log4jVersion = "2.10.0"
 ext.springDataHadoopVersion = "2.5.0.RELEASE"
-configure(subprojects.findAll { it.name != "mail-spark-processor" }) {
-    repositories {
-        mavenCentral()
-    }
+configure(subprojects.findAll { it.name != "mail-spark-processor" && it.name != "mail-db" }) {
+
+    apply plugin: "java"
+    sourceCompatibility = 1.8
 
     def withoutHadoopExtra = {
         exclude module: "slf4j-log4j12"
